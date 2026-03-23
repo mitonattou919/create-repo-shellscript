@@ -1,73 +1,73 @@
 # create-github-repo.sh
 
-GitHub リポジトリを作成し、ブランチ保護・CODEOWNERS・各種機能を一括設定するスクリプトです。
+A shell script that creates a GitHub repository and configures branch protection, CODEOWNERS, and various features all at once.
 
-## 機能
+## Features
 
-実行すると以下を自動で行います：
+When executed, the script automatically performs the following:
 
-1. GitHub CLI でログイン (`gh auth login`)
-2. リポジトリを作成（公開/非公開・説明文を設定可）
-3. `CODEOWNERS` ファイルを追加してプッシュ（全ファイルの変更にオーナー承認を要求）
-4. Discussions・Projects を有効化
-5. `main` ブランチに保護ルールセットを作成
-   - ブランチ削除の禁止
-   - 強制プッシュの禁止
-   - PR マージ前に承認者 1 名必須
-   - コードオーナーのレビュー必須
-   - プッシュ時に古いレビューを無効化
-6. GitHub CLI からログアウト
+1. Logs in via GitHub CLI (`gh auth login`)
+2. Creates a repository (with configurable visibility and description)
+3. Adds a `CODEOWNERS` file and pushes it (requires owner approval for all file changes)
+4. Enables Discussions and Projects
+5. Creates a protection ruleset for the `main` branch:
+   - Prevents branch deletion
+   - Prevents force pushes
+   - Requires at least 1 approver before merging a PR
+   - Requires code owner review
+   - Dismisses stale reviews on push
+6. Logs out from GitHub CLI
 
-## 前提条件
+## Prerequisites
 
-- [GitHub CLI (`gh`)](https://cli.github.com/) がインストール済みであること
-- `git` がインストール済みであること
+- [GitHub CLI (`gh`)](https://cli.github.com/) must be installed
+- `git` must be installed
 
-## 使い方
+## Usage
 
 ```bash
-# 対話モード（引数なし）
+# Interactive mode (no arguments)
 ./create-github-repo.sh
 
-# 引数を指定して実行
+# Run with arguments
 ./create-github-repo.sh <REPO_NAME> [DESCRIPTION] [public|private]
 ```
 
-### 引数
+### Arguments
 
-| 引数 | 説明 | デフォルト |
-|------|------|-----------|
-| `REPO_NAME` | リポジトリ名 | 対話入力 |
-| `DESCRIPTION` | リポジトリの説明（省略可） | 対話入力 |
-| `public\|private` | 公開設定 | 対話入力（デフォルト: `private`） |
+| Argument | Description | Default |
+|----------|-------------|---------|
+| `REPO_NAME` | Repository name | Interactive input |
+| `DESCRIPTION` | Repository description (optional) | Interactive input |
+| `public\|private` | Visibility setting | Interactive input (default: `private`) |
 
-### 実行例
+### Examples
 
 ```bash
-# リポジトリ名・説明・公開設定をすべて指定
+# Specify repository name, description, and visibility
 ./create-github-repo.sh my-repo "My description" private
 
-# リポジトリ名のみ指定（他は対話入力）
+# Specify repository name only (other fields via interactive input)
 ./create-github-repo.sh my-repo
 
-# すべて対話入力
+# All fields via interactive input
 ./create-github-repo.sh
 ```
 
-## ブランチ保護ルールの詳細
+## Branch Protection Rule Details
 
-`main` ブランチに以下のルールセット（`Protect main`）が作成されます：
+The following ruleset (`Protect main`) is created for the `main` branch:
 
-| ルール | 設定 |
-|--------|------|
-| ブランチ削除 | 禁止 |
-| 強制プッシュ | 禁止 |
-| 必要承認者数 | 1 名 |
-| コードオーナーのレビュー | 必須 |
-| プッシュ時に古いレビューを無効化 | 有効 |
+| Rule | Setting |
+|------|---------|
+| Branch deletion | Prohibited |
+| Force push | Prohibited |
+| Required approvers | 1 |
+| Code owner review | Required |
+| Dismiss stale reviews on push | Enabled |
 
-## 注意事項
+## Notes
 
-- スクリプト終了時に一時ディレクトリは自動削除されます
-- スクリプト完了後、`gh auth logout` が自動実行されます
-- リポジトリ名は空にできません
+- The temporary directory is automatically deleted when the script exits
+- `gh auth logout` is automatically executed after the script completes
+- Repository name cannot be empty
